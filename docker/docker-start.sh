@@ -4,7 +4,6 @@ while getopts bp: OPT
 do
 	case $OPT in
 		 b) IS_SET_OPT_B="TRUE";;
-		 p) IS_SET_OPT_P="TRUE"; DEFAULT_LOCAL_PORT=$OPTARG ;;
 		 *) echo "$OPTは定義されていません";;
 	esac
 done
@@ -32,15 +31,6 @@ if [ $isUpdate = 'true' ]; then
 	# buildしたらオリジンバージョンファイルをコピー
 	cp -f $originVerFilePath $localVerFilePath;
 fi
-
-if [ "$IS_SET_OPT_P" == "TRUE" ]; then # ポートの指定がある場合はexport
-	export DEFAULT_LOCAL_PORT="$DEFAULT_LOCAL_PORT"
-fi
-
 # コンテナ起動
 docker-compose up -d
-
-if [ "$IS_SET_OPT_P" == "TRUE" ]; then # ポートの指定がある場合はexport
-	export -n DEFAULT_LOCAL_PORT
-fi
 
