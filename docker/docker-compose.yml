@@ -1,0 +1,46 @@
+version: "1.0.0"
+services:
+  directus:
+    platform: linux/x86_64
+    image: node:18.17.0
+    ports:
+      - 8055:8055
+    tty: true
+    volumes:
+      - ../${APP_DIR}:/var/www/${APP_DIR}
+    working_dir: /var/www/${APP_DIR}
+      #restart: always
+      #command: bash -c "npm install && npx directus bootstrap && npx directus start"
+    depends_on:
+      - database
+    environment:
+      KEY: '255d861b-5ea1-5996-9aa3-922530ec40b1'
+      SECRET: '6116487b-cda1-52c2-b5b5-c8022c45e263'
+
+      DB_CLIENT: 'mysql'
+      DB_HOST: 'database'
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      ADMIN_EMAIL: 'admin@example.com'
+      ADMIN_PASSWORD: 'directus'
+  
+  database:
+    platform: linux/amd64
+    image: mysql:8.0.28
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/initdb:/docker-entrypoint-initdb.d
+      - ./mysql/state/db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: "Asia/Tokyo"
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
